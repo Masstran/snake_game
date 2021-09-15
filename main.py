@@ -8,8 +8,13 @@ screen.bgcolor("black")
 screen.title("Snake Game")
 screen.tracer(0)
 
+
 snake = Snake()
-screen.onkey()
+screen.onkey(snake.up, "Up")
+screen.onkey(snake.down, "Down")
+screen.onkey(snake.left, "Left")
+screen.onkey(snake.right, "Right")
+screen.listen()
 
 game_is_on = True
 while game_is_on:
@@ -17,10 +22,5 @@ while game_is_on:
     time.sleep(0.1)
     snake.move()
 
-    # for block_id, block in reversed(list(enumerate(snake))):
-    #     if block_id == 0:
-    #         block.forward(20)
-    #     else:
-    #         block.setpos(snake[block_id - 1].pos())
 
 screen.exitonclick()
