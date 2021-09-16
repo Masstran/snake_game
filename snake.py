@@ -1,6 +1,5 @@
 from turtle import Turtle
-
-TURTLE_SIZE = 40
+from config import TURTLE_SIZE
 FORWARD_MOVEMENT = 20
 TURN_SLEEP_STEPS = TURTLE_SIZE // FORWARD_MOVEMENT
 
@@ -21,13 +20,15 @@ class Snake:
         self.snake_body = []
         self._create_snake_()
         self.head = self.snake_body[0]
+        self.turn_buffer = None
+
 
     def _create_snake_(self):
         for i in range(3):
             turtle = Turtle("square")
             turtle.color("white")
             turtle.penup()
-            turtle.setx(-TURTLE_SIZE / 2 * i)
+            turtle.setx(-TURTLE_SIZE * i)
             self.snake_body.append(turtle)
 
     def move(self):
@@ -36,26 +37,41 @@ class Snake:
         self.head.forward(FORWARD_MOVEMENT)
         if self.turn_sleep_steps > 0:
             self.turn_sleep_steps -= 1
+        if self.turn_sleep_steps == 0 and self.turn_buffer is not None:
+            self.turn_buffer()
+            self.turn_buffer = None
 
     def _direction_(self):
         return self.head.heading()
 
     def up(self):
         if self._direction_() in HORIZONTAL_DIRECTION:
-            self.head.setheading(UP_DIRECTION)
-            self.turn_sleep_steps = TURN_SLEEP_STEPS
+            if self.turn_sleep_steps == 0:
+                self.head.setheading(UP_DIRECTION)
+                self.turn_sleep_steps = TURN_SLEEP_STEPS
+            elif self.turn_buffer is None:
+                self.turn_buffer = self.up
 
     def down(self):
         if self._direction_() in HORIZONTAL_DIRECTION:
-            self.head.setheading(DOWN_DIRECTION)
-            self.turn_sleep_steps = TURN_SLEEP_STEPS
+            if self.turn_sleep_steps == 0:
+                self.head.setheading(DOWN_DIRECTION)
+                self.turn_sleep_steps = TURN_SLEEP_STEPS
+            elif self.turn_buffer is None:
+                self.turn_buffer = self.down
 
     def left(self):
         if self._direction_() in VERTICAL_DIRECTION:
-            self.head.setheading(LEFT_DIRECTION)
-            self.turn_sleep_steps = TURN_SLEEP_STEPS
+            if self.turn_sleep_steps == 0:
+                self.head.setheading(LEFT_DIRECTION)
+                self.turn_sleep_steps = TURN_SLEEP_STEPS
+            elif self.turn_buffer is None:
+                self.turn_buffer = self.left
 
     def right(self):
         if self._direction_() in VERTICAL_DIRECTION:
-            self.head.setheading(RIGHT_DIRECTION)
-            self.turn_sleep_steps = TURN_SLEEP_STEPS
+            if self.turn_sleep_steps == 0:
+                self.head.setheading(RIGHT_DIRECTION)
+                self.turn_sleep_steps = TURN_SLEEP_STEPS
+            elif self.turn_buffer is None:
+                self.turn_buffer = self.right
