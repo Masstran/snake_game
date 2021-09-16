@@ -1,5 +1,6 @@
 from turtle import Turtle
 from config import TURTLE_SIZE
+
 FORWARD_MOVEMENT = 20
 TURN_SLEEP_STEPS = TURTLE_SIZE // FORWARD_MOVEMENT
 
@@ -22,14 +23,21 @@ class Snake:
         self.head = self.snake_body[0]
         self.turn_buffer = None
 
+    def add_segment(self, position):
+        turtle = Turtle("square")
+        turtle.color("white")
+        turtle.penup()
+        turtle.goto(position)
+        self.snake_body.append(turtle)
 
     def _create_snake_(self):
         for i in range(3):
-            turtle = Turtle("square")
-            turtle.color("white")
-            turtle.penup()
-            turtle.setx(-TURTLE_SIZE * i)
-            self.snake_body.append(turtle)
+            position = (-TURTLE_SIZE * i, 0)
+            self.add_segment(position)
+
+    def extend(self):
+        """Add a new segment to snake"""
+        self.add_segment(self.snake_body[-1].position())
 
     def move(self):
         for block_id in range(len(self.snake_body) - 1, 0, -1):
@@ -40,6 +48,12 @@ class Snake:
         if self.turn_sleep_steps == 0 and self.turn_buffer is not None:
             self.turn_buffer()
             self.turn_buffer = None
+
+    def is_dead(self) -> bool:
+        for segment in self.snake_body[1:]:
+            if self.head.distance(segment) < TURTLE_SIZE / 2:
+                return True
+        return False
 
     def _direction_(self):
         return self.head.heading()

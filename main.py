@@ -32,10 +32,15 @@ while game_is_on:
     # Detect collision with food
     if snake.head.distance(food) < 15:
         score.add()
+        snake.extend()
         food.generate_random_location()
 
     # Detect collision with wall
     if abs(snake.head.xcor()) > WIDTH / 2 - 20 or abs(snake.head.ycor()) > HEIGHT / 2 - 20:
+        game_is_on = False
+
+    # Detect snake
+    if snake.is_dead():
         game_is_on = False
 
 
